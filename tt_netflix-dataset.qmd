@@ -1,0 +1,120 @@
+---
+title: "Netlifx-data-set-2021"
+author: "Yashwant"
+format: html
+editor: visual
+---
+
+```{r load}
+main <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-20/netflix_titles.csv')
+
+library(tidyverse)
+library(ggthemes)
+library(plotly)
+library(scales)
+library(janitor)
+library(skimr)
+```
+
+```{r}
+view(main)
+```
+
+## Data cleaning 
+
+```{r}
+# distribution between movies nd tv shows
+
+main %>% 
+  group_by(type) %>% 
+  summarise(n = n())
+
+# how many movies and tv shows were released by year.
+
+main %>% 
+  group_by(type, release_year) %>% 
+  summarise(n = n()) %>% 
+  # ungroup() %>% 
+  arrange(-n, release_year)
+```
+
+```{r}
+# distribution of types based on the release year
+main %>% 
+  group_by(type, release_year) %>% 
+count(type, release_year, sort = T)
+```
+
+```{r}
+main %>% 
+  group_by(type, release_year) %>% 
+  summarise(n = n()) %>% 
+  ggplot(aes(release_year, n, color = type)) +
+  geom_line()
+
+# in terms of percentage.
+
+main %>% 
+  group_by(type, release_year) %>% 
+  summarise(n = n()) %>% 
+  mutate(percent = n/sum(n)) %>% 
+  ggplot(aes(release_year, percent, color = type)) +
+  geom_line()
+
+  
+```
+
+more number of movies happen to release.
+
+```{r}
+plot <- main %>% 
+  group_by(type) %>%
+  count(year = 2*(release_year %/% 2), type, sort = T) %>% 
+  ggplot(aes(year, n, color = type)) +
+    geom_line()
+    # ggplot(aes(year,n, fill = type)) +
+    # geom_col(position = "dodge")
+
+
+  
+ggplotly(plot)
+```
+
+```{r}
+main %>% 
+  group_by(type, release_year) %>% 
+  summarise(n = n()) %>% 
+  mutate(percent = n/sum(n))
+```
+
+```{r}
+count(main,release_year, sort = T)
+```
+
+```{r}
+main %>% 
+  group_by(type) %>% 
+  mutate(year = 2 * ( release_year %/% 2)) %>% 
+  summarise(n = n()) %>% 
+  mutate(percent = n/sum(n)) 
+  
+
+```
+
+```{r}
+main %>%
+  group_by(type) %>% 
+  count(year = 2 * (release_year %/% 2), type) %>% 
+  mutate(percent = n/sum(n)) %>% 
+  ggplot(aes(year, percent, color = type)) +
+  geom_line()
+  
+```
+
+```{r}
+tabyl(main, type)
+```
+
+```{r}
+
+```
